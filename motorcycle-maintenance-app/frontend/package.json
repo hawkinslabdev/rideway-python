@@ -24,7 +24,9 @@
     "class-variance-authority": "^0.7.0",
     "axios": "^1.7.0",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "radix-ui": "^2.1.7",
+    "lucide-react": "^0.511.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

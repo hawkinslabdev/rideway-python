@@ -1,5 +1,6 @@
 # backend/app/api/v1/endpoints/dashboard.py
-from fastapi import APIRouter, Depends
+from http.client import HTTPException
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import Optional
 
