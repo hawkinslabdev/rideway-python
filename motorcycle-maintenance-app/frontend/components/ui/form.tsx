@@ -124,7 +124,7 @@ export function MotorcycleForm({ motorcycle, onSubmit, onCancel, loading = false
             <Label htmlFor="make">Make *</Label>
             <Select 
               value={formData.make} 
-              onValueChange={(value) => handleChange('make', value)}
+              onValueChange={(value: string) => handleChange('make', value)}
               disabled={loading}
             >
               <SelectTrigger className={errors.make ? 'border-red-500' : ''}>

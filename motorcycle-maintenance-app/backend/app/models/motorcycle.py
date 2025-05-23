@@ -29,3 +29,8 @@ class Motorcycle(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     notes = Column(Text)
+    
+    # Relationships
+    maintenance_records = relationship("MaintenanceRecord", back_populates="motorcycle")
+    parts = relationship("Part", back_populates="motorcycle")
+    ride_logs = relationship("RideLog", back_populates="motorcycle")

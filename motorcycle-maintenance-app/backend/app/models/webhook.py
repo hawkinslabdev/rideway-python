@@ -1,3 +1,8 @@
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text
+from sqlalchemy.sql import func
+from app.core.database import Base
+
+
 class WebhookConfig(Base):
     __tablename__ = "webhook_configs"
     

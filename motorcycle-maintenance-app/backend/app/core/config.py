@@ -9,11 +9,14 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./data/motorcycle_maintenance.db"
     
     # CORS
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000", "http://localhost:8080"]
     
     # File upload settings
     UPLOAD_DIR: str = "static/uploads"
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
+    
+    # Webhook settings
+    WEBHOOK_TIMEOUT: int = 30  # seconds
     
     # Locale settings (Europe/GMT+1 default)
     DEFAULT_TIMEZONE: str = "Europe/Amsterdam"
