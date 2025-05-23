@@ -14,13 +14,13 @@ services:
     restart: unless-stopped
 
   backend:
-    image: python:3.11-slim
-    working_dir: /app
-    # Remove external port mapping - only internal
+    build: ./backend
     expose:
       - "8000"
     volumes:
       - ./backend:/app
+      - ./backend/data:/app/data  # Persist database
+      - ./backend/static:/app/static  # Persist uploads
     env_file:
       - ./backend/.env
     environment:
@@ -29,14 +29,8 @@ services:
       - UPLOAD_DIR=static/uploads
       - DEFAULT_TIMEZONE=Europe/Amsterdam
       - DEFAULT_CURRENCY=EUR
-      - CORS_ORIGINS=http://localhost:8080,https://your-tunnel-domain.com
-    command: >
-      bash -c "
-        apt-get update && apt-get install -y gcc curl &&
-        pip install -r requirements.txt &&
-        mkdir -p data static/uploads &&
-        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-      "
+      - CORS_ORIGINS=http://localhost:8080,http://localhost:3000
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -44,26 +38,17 @@ services:
       retries: 3
 
   frontend:
-    image: node:18-alpine  
-    working_dir: /app
-    # Remove external port mapping - only internal
+    build: ./frontend
     expose:
       - "3000"
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-    env_file:
-      - ./frontend/.env.local
+      - /app/node_modules  # Prevent node_modules from being overwritten
+      - /app/.next  # Prevent build cache issues
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080/api  # Through nginx
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api
       - NODE_ENV=development
-    command: >
-      sh -c "
-        npm install &&
-        npm run dev
-      "
-    depends_on:
-      - backend
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
