@@ -10,19 +10,17 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.0",
-    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.14",
     "@types/node": "^20.14.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
     "axios": "^1.7.0",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.511.0",
     "next": "^15.0.0",
     "postcss": "^8.4.38",
     "radix-ui": "^1.4.2",
-    "react": "^18.3.0",
+    "react": "^18.3.1",
     "react-dom": "^18.3.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^3.4.0",
@@ -30,6 +28,9 @@
     "typescript": "^5.5.0"
   },
   "devDependencies": {
+    "@radix-ui/react-toast": "^1.2.14",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.0"
   }
