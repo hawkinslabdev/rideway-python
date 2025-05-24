@@ -110,7 +110,7 @@ export function MotorcycleForm({ motorcycle, onSubmit, onCancel, loading = false
           <Label htmlFor="name">Motorcycle Name *</Label>
           <Input
             id="name"
-            placeholder="e.g., My Yamaha MT-07, Red Beast"
+            placeholder="e.g., Thumper, Rebel"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
             className={errors.name ? 'border-red-500' : ''}

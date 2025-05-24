@@ -133,7 +133,7 @@ export default function AddMotorcyclePage() {
         </CardHeader>
         <CardContent className="text-blue-700 space-y-2">
           <p className="text-sm">
-            <strong>Name:</strong> Choose a memorable name like "My Yamaha" or "Red Beast"
+            <strong>Name:</strong> Choose a memorable name like "Thumper" or "Rebel"
           </p>
           <p className="text-sm">
             <strong>Mileage:</strong> Enter the current odometer reading in kilometers

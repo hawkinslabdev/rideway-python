@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 import logging
 from contextlib import asynccontextmanager
+import os
 
 from app.core.config import settings
 from app.core.database import engine, create_tables
@@ -18,9 +19,17 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting up...")
+    
+    # Create directories if they don't exist
+    os.makedirs("data", exist_ok=True)
+    os.makedirs("static/uploads", exist_ok=True)
+    
+    # Create database tables
     create_tables()
     logger.info("Database tables created")
+    
     yield
+    
     # Shutdown
     logger.info("Shutting down...")
 
@@ -32,10 +41,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS middleware - Allow all for development
+# CORS middleware - Configure properly
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins in development
+    allow_origins=["*"],  # In production, replace with specific origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,31 +54,43 @@ app.add_middleware(
 @app.middleware("http")
 async def log_requests(request, call_next):
     logger.info(f"{request.method} {request.url}")
-    response = await call_next(request)
-    logger.info(f"Response: {response.status_code}")
-    return response
+    try:
+        response = await call_next(request)
+        logger.info(f"Response: {response.status_code}")
+        return response
+    except Exception as e:
+        logger.error(f"Request failed: {str(e)}")
+        raise
 
-# Static files for uploads (receipts, photos)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static files for uploads
+try:
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+except Exception as e:
+    logger.warning(f"Could not mount static files: {e}")
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
+# Root endpoint
 @app.get("/")
 async def root():
-    logger.info("Root endpoint called")
-    return {"message": "Motorcycle Maintenance Tracker API", "version": "1.0.0"}
+    return {
+        "message": "Motorcycle Maintenance Tracker API",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/health"
+    }
 
+# Health check endpoint (root level)
 @app.get("/health")
 async def health_check():
-    logger.info("Health check called")
     return {"status": "healthy", "message": "API is running"}
 
-# Add a test endpoint to debug
-@app.get("/api/v1/test")
-async def test_endpoint():
-    logger.info("Test endpoint called")
-    return {"message": "Test successful", "status": "ok"}
+# 404 handler
+@app.exception_handler(404)
+async def not_found_handler(request, exc):
+    logger.warning(f"404 Not Found: {request.url}")
+    return {"detail": f"Not found: {request.url.path}"}
 
 if __name__ == "__main__":
     uvicorn.run(
