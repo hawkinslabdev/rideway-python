@@ -46,7 +46,8 @@ services:
       - /app/node_modules  # Prevent node_modules from being overwritten
       - /app/.next  # Prevent build cache issues
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+      # Use relative URL since nginx handles routing
+      - NEXT_PUBLIC_API_URL=/api/v1
       - NODE_ENV=development
     restart: unless-stopped
     healthcheck:

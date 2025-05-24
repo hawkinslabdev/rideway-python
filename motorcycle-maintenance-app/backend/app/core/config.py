@@ -1,3 +1,4 @@
+# backend/app/core/config.py
 from pydantic_settings import BaseSettings
 from typing import List
 
@@ -8,8 +9,14 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./data/motorcycle_maintenance.db"
     
-    # CORS
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8060", "http://localhost:8080"]
+    # CORS - Allow all origins in development
+    BACKEND_CORS_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:8080", 
+        "http://frontend:3000",
+        "http://nginx",
+        "*"  # Allow all for development
+    ]
     
     # File upload settings
     UPLOAD_DIR: str = "static/uploads"

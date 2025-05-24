@@ -1,29 +1,47 @@
 // frontend/lib/api.ts
 import axios from 'axios'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8060/api/v1'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1'
+
+console.log('API_BASE_URL:', API_BASE_URL) // Debug log
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 second timeout
 })
 
-// Request interceptor for auth (when we add it later)
+// Request interceptor for debugging
 apiClient.interceptors.request.use((config) => {
-  // Add auth token here when implemented
+  console.log('Making request to:', (config.baseURL ?? '') + config.url)
   return config
 })
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response received:', response.status, response.config.url)
+    return response
+  },
   (error) => {
-    console.error('API Error:', error.response?.data || error.message)
+    console.error('API Error Details:', {
+      message: error.message,
+      code: error.code,
+      config: error.config,
+      response: error.response?.data,
+      status: error.response?.status
+    })
     return Promise.reject(error)
   }
 )
+
+// Test function
+export const testApi = {
+  health: () => apiClient.get('/health'),
+  test: () => apiClient.get('/test'),
+}
 
 // Motorcycle API
 export const motorcycleApi = {
@@ -44,6 +62,12 @@ export const motorcycleApi = {
   
   updateMileage: (id: number, mileage: number) => 
     apiClient.post(`/motorcycles/${id}/mileage`, { new_mileage: mileage }),
+}
+
+// Dashboard API
+export const dashboardApi = {
+  getStats: () => apiClient.get('/dashboard/stats'),
+  getMaintenanceDue: (daysAhead = 60) => apiClient.get(`/dashboard/maintenance-due?days_ahead=${daysAhead}`),
 }
 
 // Maintenance API

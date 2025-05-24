@@ -13,7 +13,7 @@ export function Header() {
         <div className="flex items-center space-x-4">
           {/* Add padding on mobile to account for menu button */}
           <h2 className="text-lg md:text-2xl font-semibold text-gray-900 ml-16 md:ml-0">
-            Motorcycle Maintenance Tracker
+            Motorcycle Maintenance
           </h2>
         </div>
         
