@@ -103,7 +103,6 @@ downloads/
 eggs/
 .eggs/
 lib64/
-parts/
 sdist/
 var/
 wheels/
@@ -170,9 +169,6 @@ static/uploads/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Docker
-.dockerignore
 
 # Temporary files
 tmp/
