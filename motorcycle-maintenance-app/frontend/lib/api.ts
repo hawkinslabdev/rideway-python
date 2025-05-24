@@ -160,3 +160,178 @@ export const webhooksApi = {
 }
 
 export default apiClient
+
+// Extended Parts API
+export const partsApiExtended = {
+  ...partsApi,
+  
+  use: (id: number, quantity: number) => 
+    apiClient.post(`/parts/${id}/use`, { quantity }),
+  
+  restock: (id: number, quantity: number, unitPrice?: number) => 
+    apiClient.post(`/parts/${id}/restock`, { quantity, unit_price: unitPrice }),
+  
+  getLowStock: (threshold = 5) => 
+    apiClient.get(`/parts/low-stock?threshold=${threshold}`),
+  
+  getByCategory: (motorcycleId: number) => 
+    apiClient.get(`/parts/categories/${motorcycleId}`),
+}
+
+// Extended Maintenance API
+export const maintenanceApiExtended = {
+  ...maintenanceApi,
+  
+  getHistory: (motorcycleId: number, serviceType?: string) => {
+    const params = serviceType ? `?service_type=${serviceType}` : ''
+    return apiClient.get(`/maintenance/history/${motorcycleId}${params}`)
+  },
+  
+  getCosts: (motorcycleId?: number, startDate?: string, endDate?: string) => {
+    const params = new URLSearchParams()
+    if (motorcycleId) params.append('motorcycle_id', motorcycleId.toString())
+    if (startDate) params.append('start_date', startDate)
+    if (endDate) params.append('end_date', endDate)
+    return apiClient.get(`/maintenance/costs?${params.toString()}`)
+  },
+  
+  getOverdue: (motorcycleId?: number) => {
+    const params = motorcycleId ? `?motorcycle_id=${motorcycleId}` : ''
+    return apiClient.get(`/maintenance/overdue${params}`)
+  },
+}
+
+// Extended Logs API
+export const logsApiExtended = {
+  ...logsApi,
+  
+  getSummary: (motorcycleId: number, startDate?: string, endDate?: string) => {
+    const params = new URLSearchParams()
+    if (startDate) params.append('start_date', startDate)
+    if (endDate) params.append('end_date', endDate)
+    return apiClient.get(`/logs/summary/${motorcycleId}?${params.toString()}`)
+  },
+  
+  getFuelStats: (motorcycleId?: number) => {
+    const params = motorcycleId ? `?motorcycle_id=${motorcycleId}` : ''
+    return apiClient.get(`/logs/fuel/statistics${params}`)
+  },
+}
+
+// Extended Dashboard API
+export const dashboardApiExtended = {
+  ...dashboardApi,
+  
+  getFleetSummary: () => apiClient.get('/dashboard/fleet-summary'),
+  
+  getMotorcycleOverview: (motorcycleId: number) => 
+    apiClient.get(`/dashboard/motorcycle/${motorcycleId}`),
+}
+
+// Export/Import API
+export const dataApi = {
+  exportCsv: (entity: 'motorcycles' | 'maintenance' | 'parts' | 'logs') => 
+    apiClient.get(`/export/${entity}/csv`, { responseType: 'blob' }),
+  
+  exportJson: (entity: 'motorcycles' | 'maintenance' | 'parts' | 'logs') => 
+    apiClient.get(`/export/${entity}/json`, { responseType: 'blob' }),
+  
+  exportPdf: (reportType: 'summary' | 'maintenance' | 'expenses') => 
+    apiClient.get(`/export/report/${reportType}`, { responseType: 'blob' }),
+  
+  importData: (file: File, entity: string) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('entity', entity)
+    return apiClient.post('/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+  },
+}
+
+// File upload helper
+export const uploadFile = async (file: File, type: 'receipt' | 'photo' | 'document'): Promise<string> => {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('type', type)
+  
+  const response = await apiClient.post('/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  
+  return response.data.url
+}
+
+// Bulk operations
+export const bulkOperations = {
+  updateMileage: (updates: Array<{ motorcycleId: number, mileage: number }>) => 
+    apiClient.post('/bulk/update-mileage', { updates }),
+  
+  completeMaintenance: (maintenanceIds: number[]) => 
+    apiClient.post('/maintenance/bulk-complete', { maintenance_ids: maintenanceIds }),
+  
+  archiveMotorcycles: (motorcycleIds: number[]) => 
+    apiClient.post('/bulk/archive-motorcycles', { motorcycle_ids: motorcycleIds }),
+}
+
+// Search API
+export const searchApi = {
+  global: (query: string) => 
+    apiClient.get(`/search?q=${encodeURIComponent(query)}`),
+  
+  motorcycles: (query: string) => 
+    apiClient.get(`/search/motorcycles?q=${encodeURIComponent(query)}`),
+  
+  parts: (query: string) => 
+    apiClient.get(`/search/parts?q=${encodeURIComponent(query)}`),
+  
+  maintenance: (query: string) => 
+    apiClient.get(`/search/maintenance?q=${encodeURIComponent(query)}`),
+}
+
+// Statistics API
+export const statisticsApi = {
+  getYearlyReport: (year: number) => 
+    apiClient.get(`/statistics/yearly/${year}`),
+  
+  getMonthlyTrends: (months: number = 12) => 
+    apiClient.get(`/statistics/trends?months=${months}`),
+  
+  getServiceTypeStats: () => 
+    apiClient.get('/statistics/service-types'),
+  
+  getExpenseBreakdown: (startDate?: string, endDate?: string) => {
+    const params = new URLSearchParams()
+    if (startDate) params.append('start_date', startDate)
+    if (endDate) params.append('end_date', endDate)
+    return apiClient.get(`/statistics/expenses?${params.toString()}`)
+  },
+}
+
+// Notification preferences
+export const notificationApi = {
+  getPreferences: () => 
+    apiClient.get('/notifications/preferences'),
+  
+  updatePreferences: (preferences: any) => 
+    apiClient.put('/notifications/preferences', preferences),
+  
+  testNotification: (type: string) => 
+    apiClient.post('/notifications/test', { type }),
+}
+
+// Update the default export to include all extended APIs
+export const api = {
+  motorcycles: motorcycleApi,
+  maintenance: maintenanceApiExtended,
+  parts: partsApiExtended,
+  logs: logsApiExtended,
+  dashboard: dashboardApiExtended,
+  webhooks: webhooksApi,
+  data: dataApi,
+  bulk: bulkOperations,
+  search: searchApi,
+  statistics: statisticsApi,
+  notifications: notificationApi,
+  upload: uploadFile,
+}
