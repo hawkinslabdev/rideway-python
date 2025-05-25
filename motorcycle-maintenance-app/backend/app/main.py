@@ -6,6 +6,7 @@ import uvicorn
 import logging
 from contextlib import asynccontextmanager
 import os
+from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.core.database import engine, create_tables
@@ -90,7 +91,10 @@ async def health_check():
 @app.exception_handler(404)
 async def not_found_handler(request, exc):
     logger.warning(f"404 Not Found: {request.url}")
-    return {"detail": f"Not found: {request.url.path}"}
+    return JSONResponse(
+        status_code=404,
+        content={"detail": f"Not found: {request.url.path}"}
+    )
 
 if __name__ == "__main__":
     uvicorn.run(
