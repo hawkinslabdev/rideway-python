@@ -85,7 +85,7 @@ for route in app.routes:
 @app.get("/")
 async def root():
     return {
-        "message": "Motorcycle Maintenance Tracker API",
+        "message": "Rideway API",
         "version": "1.0.0",
         "docs": "/docs",
         "health": "/health"

@@ -78,3 +78,13 @@ class PartExpenseSummary(BaseModel):
     total_stock_value: float
     average_part_cost: float
     category_breakdown: dict
+
+
+# Fix: Add the UsePartRequest and RestockPartRequest models that are referenced in the endpoints
+class UsePartRequest(BaseModel):
+    quantity: int
+
+
+class RestockPartRequest(BaseModel):
+    quantity: int
+    unit_price: Optional[float] = None
