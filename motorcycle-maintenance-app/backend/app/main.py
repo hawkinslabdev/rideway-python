@@ -35,11 +35,13 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down...")
 
 app = FastAPI(
-    title="Motorcycle Maintenance Tracker API",
+    title="Rideway API",
     description="API for tracking motorcycle maintenance, parts, and service records",
     version="1.0.0",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False  # Disable automatic trailing slash redirects
+
 )
 
 # CORS middleware - Configure properly

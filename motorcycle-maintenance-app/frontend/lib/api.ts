@@ -13,6 +13,7 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 10000, // 10 second timeout
+  maxRedirects: 0, // Don't follow redirects - this will help debug 307 issues
 })
 
 // Request interceptor for debugging
