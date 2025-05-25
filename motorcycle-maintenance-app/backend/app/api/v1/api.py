@@ -21,3 +21,8 @@ async def api_health_check():
 @api_router.get("/test")
 async def test_endpoint():
     return {"message": "API test successful", "status": "ok"}
+
+# Debug: Print all routes
+print("API Router Routes:")
+for route in api_router.routes:
+    print(f"  {route.methods} {route.path}")

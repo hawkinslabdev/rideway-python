@@ -70,7 +70,16 @@ except Exception as e:
     logger.warning(f"Could not mount static files: {e}")
 
 # Include API router
+print(f"API_V1_STR setting: {settings.API_V1_STR}")
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+# Debug: Print all registered routes
+print("All registered routes:")
+for route in app.routes:
+    if hasattr(route, 'methods') and hasattr(route, 'path'):
+        print(f"  {route.methods} {route.path}")
+    else:
+        print(f"  {type(route)} {getattr(route, 'path', 'no path')}")
 
 # Root endpoint
 @app.get("/")

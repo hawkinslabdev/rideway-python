@@ -3,7 +3,9 @@ import axios from 'axios'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1'
 
-console.log('API_BASE_URL:', API_BASE_URL) // Debug log
+console.log('Environment:', process.env.NODE_ENV)
+console.log('NEXT_PUBLIC_API_URL env var:', process.env.NEXT_PUBLIC_API_URL)
+console.log('API_BASE_URL resolved to:', API_BASE_URL)
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
